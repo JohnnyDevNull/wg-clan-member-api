@@ -7,6 +7,8 @@ class Routes
     public function attach(\Slim\App $app)
     {
         $app->get('/', \jp\Controllers\IndexController::class.':index');
+        $app->get('/ranks', \jp\Controllers\IndexController::class.':getRanks');
+
         $app->get('/clans', \jp\Controllers\ClansController::class.':getList');
         $app->get('/clans/{clanId:[0-9]+}', \jp\Controllers\ClansController::class.':getClan');
         $app->get('/clans/{clanId:[0-9]+}/info', \jp\Controllers\ClansController::class.':getClanInfo');

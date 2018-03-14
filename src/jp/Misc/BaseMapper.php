@@ -3,9 +3,6 @@
 namespace jp\Misc;
 
 use Interop\Container\ContainerInterface as Container;
-use jp\Wargaming\Reader\Clans as ClansReader;
-use jp\Wargaming\Reader\Wot as WotReader;
-use jp\Wargaming\Reader\Wows as WowsReader;
 
 class BaseMapper
 {

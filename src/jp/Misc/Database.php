@@ -44,7 +44,7 @@ final class Database
      */
     private $mysqli;
 
-    private function __constructor($host, $user, $pass, $db, $port)
+    private function __construct($host, $user, $pass, $db, $port)
     {
         $this->host = (string)$host;
         $this->user = (string)$user;
@@ -53,7 +53,7 @@ final class Database
         $this->port = (int)$port;
     }
 
-    public function __destructor()
+    public function __destruct()
     {
         $this->disconnect();
     }
@@ -68,12 +68,12 @@ final class Database
      */
     public static function getInstance($host, $user, $pass, $db, $port)
     {
-        if (!empty(self::$instance))
+        if (empty(self::$instance))
         {
-            return $instance;
+            self::$instance = new Database($host, $user, $pass, $db, $port);
         }
 
-        self::$instance = new Database($host, $user, $pass, $db, $port);
+        return self::$instance;
     }
 
     private function connect()
@@ -82,6 +82,11 @@ final class Database
         {
             $this->mysqli = new \mysqli();
             $this->mysqli->connect($this->host, $this->user, $this->pass, $this->db, $this->port);
+
+            if ($this->mysqli->connect_errno != 0)
+            {
+                throw new \Exception("Connection Error: (" . $this->mysqli->connect_errno . ") " . $this->mysqli->connect_error);
+            }
         }
     }
 
@@ -98,7 +103,7 @@ final class Database
      * @param string $sql
      * @return \jp\DB
      */
-    public function setSQL(string $sql): \jp\DB
+    public function setSQL($sql)
     {
         $this->sql = $sql;
         return $this;
@@ -117,7 +122,7 @@ final class Database
 
         if (!($stmt = $this->mysqli->prepare($this->sql)))
         {
-            throw new Exception("Prepare failed: (" . $this->mysqli->prepare->errno . ") " . $this->mysqli->error);
+            throw new \Exception("Prepare failed: (" . $this->mysqli->prepare->errno . ") " . $this->mysqli->error);
         }
 
         return $stmt;
@@ -129,7 +134,7 @@ final class Database
      * @return false|\mysqli_result|string[]
      * @throws DB\Exception
      */
-    public function query(string $sql, bool $fetch = false)
+    public function query($sql, $fetch = false)
     {
         if ($this->mysqli === false)
         {
@@ -166,7 +171,7 @@ final class Database
      * @param string $sql
      * @return mixed
      */
-    public function querySingle(string $sql)
+    public function querySingle($sql)
     {
         $ret = $this->query($sql, true);
 
@@ -182,7 +187,7 @@ final class Database
      * @param array $array
      * @return string
      */
-    public function getWhereSqlFromArray(array $array): string
+    public function getWhereSqlFromArray($array)
     {
         $where = array();
 
@@ -209,7 +214,7 @@ final class Database
      * @param bool $escape [optional] default: false
      * @return string
      */
-    public function quote(string $string, bool $escape = false): string
+    public function quote($string, $escape = false)
     {
         if (empty($this->mysqli))
         {
@@ -228,7 +233,7 @@ final class Database
      * @param string $string
      * @return string
      */
-    public function escape(string $string): string
+    public function escape($string)
     {
         if (empty($this->mysqli))
         {
@@ -242,7 +247,7 @@ final class Database
      * @param string $col
      * @return string
      */
-    public function escapeCol(string $col): string
+    public function escapeCol($col)
     {
         return '`'.trim(str_replace('`', '', trim($col)), '´').'`';
     }
@@ -251,7 +256,7 @@ final class Database
      * @param string $table
      * @return string
      */
-    public function escapeTable(string $table): string
+    public function escapeTable($table)
     {
         return '`'.trim(str_replace('`', '', trim($table)), '´').'`';
     }
@@ -259,7 +264,7 @@ final class Database
     /**
      * @return string
      */
-    public function getLastQuery(): string
+    public function getLastQuery()
     {
         return $this->sql;
     }
@@ -267,7 +272,7 @@ final class Database
     /**
      * @return int
      */
-    public function getAffectedRows(): int
+    public function getAffectedRows()
     {
         return $this->mysqli->affected_rows;
     }
@@ -275,7 +280,7 @@ final class Database
     /**
      * @return int
      */
-    public function getErrorNo(): int
+    public function getErrorNo()
     {
         return $this->mysqli->errno;
     }
@@ -283,7 +288,7 @@ final class Database
     /**
      * @return string
      */
-    public function getError(): string
+    public function getError()
     {
         return $this->mysqli->error;
     }
@@ -291,7 +296,7 @@ final class Database
     /**
      * @return int
      */
-    public function getInsertID(): int
+    public function getInsertID()
     {
         return $this->mysqli->insert_id;
     }

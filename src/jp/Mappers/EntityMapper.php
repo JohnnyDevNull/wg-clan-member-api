@@ -1,9 +1,11 @@
 <?php
 
-namespace \jp\Mappers;
+namespace jp\Mappers;
 
-use \jp\Misc\BaseMapper as BaseMapper;
-use \jp\Misc\Database as Database;
+use jp\Misc\BaseMapper;
+use jp\Misc\Database;
+use jp\Models\Database\EntityModel;
+use Interop\Container\ContainerInterface as Container;
 
 class EntityMapper extends BaseMapper
 {
@@ -16,7 +18,7 @@ class EntityMapper extends BaseMapper
      * @param Interop\Container\ContainerInterface $container
      * @param \jp\Misc\Database
      */
-    public function __constructor(Container $container, Database $db = null)
+    public function __construct(Container $container, Database $db = null)
     {
         parent::__construct($container);
 
@@ -26,108 +28,179 @@ class EntityMapper extends BaseMapper
         }
         else
         {
-            $dbConf = $container->get('db');
+            $dbConf = $container->get('settings')['db'];
             $this->db = Database::getInstance(
                 $dbConf['host'],
                 $dbConf['user'],
                 $dbConf['pass'],
-                $dbConf['db'],
+                $dbConf['dbname'],
                 $dbConf['port']
             );
         }
     }
 
+    /**
+     * @param int $clanId
+     * @return array
+     */
     public function getClanModelById($clanId)
     {
-        $query = 'SELECT * FROM clans WHERE clan_id = ?';
+        $query = 'SELECT * '.
+                 'FROM clans '.
+                 'WHERE clan_id = ?';
+
         $stmt = $this->db->prepare($query);
-        $stmt->bind('i', (int)$clanId);
+        $stmt->bind_param('i', $clanId);
         $stmt->execute();
 
         if ( ($res = $stmt->get_result()) != false )
         {
             $entity = $res->fetch_object();
+            $clanModel = new EntityModel($this->container);
+            $clanModel->setData($entity);
 
-            $model = new \jp\Models\CLanModel($this->container);
-            $model->setId($entity->id);
-            $model->setName($entity->name);
-            $model->setTag($entity->tag);
-
-            return $model;
+            return (array)$clanModel->getData();
         }
 
-        return false;
-    }
-
-    public function getMembersModelById($memberId)
-    {
-        $query = 'SELECT * FROM members WHERE id = ?';
-        $stmt = $this->db->prepare($query);
-        $stmt->bind('i', (int)$memberId);
-        $stmt->execute();
-
-        if ( ($res = $stmt->get_result()) != false )
-        {
-            $entity = $res->fetch_object();
-
-            $model = new \jp\Models\MemberModel($this->container);
-            $model->setId($entity->id);
-            $model->setClanId($entity->clan_id);
-            $model->setName($entity->name);
-            $model->setDateJoined($entity->date_joined);
-            $model->setDateLastBattle($entity->date_last_battle);
-
-            return $model;
-        }
-
-        return false;
+        return [];
     }
 
     /**
-     * @param int $rankTypeId
-     * @return \jp\Models\MemberModel[]
+     * @param int $clanId
+     * @return array
      */
-    public function getRankItemModelArrayByTypeId($rankTypeId)
+    public function getMembersByClanId($clanId)
     {
-        $query = 'SELECT * FROM rank_items WHERE rank_type_id = ?';
+        $query = 'SELECT * '.
+                 'FROM members '.
+                 'WHERE clan_id = ?';
+
         $stmt = $this->db->prepare($query);
-        $stmt->bind('i', (int)$rankTypeId);
+        $stmt->bind_param('i', $clanId);
         $stmt->execute();
         $res = $stmt->get_result();
 
-        $modelArr = [];
+        $modelArr['items'] = [];
 
         while ( $res != false && ($entity = $res->fetch_object()) != false )
         {
-            $model = new \jp\Models\RankItemModel($this->container);
-            $model->setId($entity->id);
-            $model->setMemberId($entity->member_id);
-            $model->setTypeId($entity->rank_type_id);
-            $model->setValue($entity->value);
-            $modelArr[] = $model;
+            $memberModel = new EntityModel($this->container);
+            $memberModel->setData($entity);
+
+            $modelArr['items'][] = (array)$memberModel->getData();
         }
 
         return $modelArr;
     }
 
-    public function getRankTypeModelById($rankTypeId)
+    /**
+     * @param int $clanId
+     * @param int $memberId
+     * @return array
+     */
+    public function getMemberModelById($clanId, $memberId)
     {
-        $query = 'SELECT * FROM rank_type WHERE id = ?';
+        $query = 'SELECT * '.
+                 'FROM members '.
+                 'WHERE id = ? '.
+                 'AND clan_id = ?';
+
         $stmt = $this->db->prepare($query);
-        $stmt->bind('i', (int)$rankTypeId);
+        $stmt->bind_param('ii', $memberId, $clanId);
         $stmt->execute();
+
+        $memberData['items'] = [];
 
         if ( ($res = $stmt->get_result()) != false )
         {
             $entity = $res->fetch_object();
 
-            $model = new \jp\Models\RankTypeModel($this->container);
-            $model->setId($entity->id);
-            $model->setName($entity->name);
+            $typeModel = new EntityModel($this->container);
+            $typeModel->setData($entity);
 
-            return $model;
+            $memberData['items'][] = (array)$typeModel->getData();
         }
 
-        return false;
+        return $memberData;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRankTypes()
+    {
+        $query = 'SELECT * '.
+                 'FROM rank_type';
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        $modelArr['items'] = [];
+
+        while ( $res != false && ($entity = $res->fetch_object()) != false )
+        {
+            $typeModel = new EntityModel($this->container);
+            $typeModel->setData($entity);
+
+            $modelArr['items'][] = (array)$typeModel->getData();
+        }
+
+        return $modelArr;
+    }
+
+    /**
+     * @param int $clanId
+     * @return array
+     */
+    public function getRankItemsByClanId($clanId)
+    {
+        $queryTypes = 'SELECT * '.
+                      'FROM rank_type';
+
+        $stmtTypes = $this->db->prepare($queryTypes);
+        $stmtTypes->execute();
+        $resTypes = $stmtTypes->get_result();
+
+        $typeItemsArray['items'] = [];
+
+        while ( $resTypes != false && ($typeEntity = $resTypes->fetch_object()) != false )
+        {
+            $typeModel = new EntityModel($this->container);
+            $typeModel->setData($typeEntity);
+
+            $typeId = (int)$typeEntity->id;
+            $typeName = (string)$typeEntity->name;
+
+            $typeData = [
+                'id' => $typeId,
+                'name' => $typeName,
+                'items' => []
+            ];
+
+            $queryItems = 'SELECT * '.
+                          'FROM rank_items '.
+                          'WHERE rank_type_id = ? '.
+                          'AND clan_id = ?';
+
+            $stmtItems = $this->db->prepare($queryItems);
+            $stmtItems->bind_param('ii', $typeId, $clanId);
+            $stmtItems->execute();
+            $resItems = $stmtItems->get_result();
+
+            $modelArr = [];
+
+            while ( $resItems != false && ($rankItemEntity = $resItems->fetch_object()) != false )
+            {
+                $itemModel = new EntityModel($this->container);
+                $itemModel->setData($rankItemEntity);
+                $modelArr[] = (array)$itemModel->getData();
+            }
+
+            $typeData['items'] = $modelArr;
+            $typeItemsArray['items'][] = $typeData;
+        }
+
+        return $typeItemsArray;
     }
 }
