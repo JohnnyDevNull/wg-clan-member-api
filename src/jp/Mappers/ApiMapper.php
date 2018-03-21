@@ -75,6 +75,21 @@ class ApiMapper extends BaseMapper
     }
 
     /**
+     * @param int $playerId
+     * @return string
+     * @throws \LogicException
+     */
+    public function getPlayer($playerId)
+    {
+        if ($this->wgSettings['api'] != 'worldofwarships')
+        {
+            throw new \LogicException('not implemented yet');
+        }
+
+        return $this->getJson($this->wowsReader->getAccountInfo($playerId));
+    }
+
+    /**
      * @param string $name
      * @return string
      * @throws \LogicException
