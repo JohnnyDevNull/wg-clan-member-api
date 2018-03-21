@@ -3,7 +3,7 @@ namespace jp\Controllers;
 
 use jp\Misc\BaseController;
 use jp\Mappers\EntityMapper;
-use jp\Models\Api\JsonModel;
+use jp\Mappers\ApiMapper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\RequestInterface as Request;
 
@@ -62,20 +62,15 @@ class ClansController extends BaseController
     public function getClanInfo(Request $request, Response $response, $args)
     {
         $clanId = $this->getClanIdFromArgs($args);
-        $apiMapper = new \jp\Mappers\ApiMapper($this->container);
-        $jsonModel = $apiMapper->getClan($clanId);
-        return $jsonModel->getJson();
+        $apiMapper = new ApiMapper($this->container);
+        return $apiMapper->getClan($clanId);
     }
 
     public function getMemberList(Request $request, Response $response, $args)
     {
         $clanId = $this->getClanIdFromArgs($args);
         $entityMapper = new EntityMapper($this->container);
-        $members = $entityMapper->getMembersByClanId($clanId);
-        $apiJsonModel = new JsonModel($this->container);
-        $apiJsonModel->setJson(json_encode($members));
-
-        return $apiJsonModel->getJson();
+        return $entityMapper->getMembersByClanId($clanId);
     }
 
     public function getMember(Request $request, Response $response, $args)
@@ -83,22 +78,13 @@ class ClansController extends BaseController
         $clanId = $this->getClanIdFromArgs($args);
         $memberId = $this->getMemberIdFromArgs($args);
         $entityMapper = new EntityMapper($this->container);
-        $members = $entityMapper->getMemberModelById($clanId, $memberId);
-        $apiJsonModel = new JsonModel($this->container);
-        $apiJsonModel->setJson(json_encode($members));
-
-        return $apiJsonModel->getJson();
+        return $entityMapper->getMemberModelById($clanId, $memberId);
     }
 
     public function getRanks(Request $request, Response $response, $args)
     {
         $clanId = $this->getClanIdFromArgs($args);
-
         $entityMapper = new EntityMapper($this->container);
-        $rankTypeItems = $entityMapper->getRankItemsByClanId($clanId);
-        $apiJsonModel = new JsonModel($this->container);
-        $apiJsonModel->setJson(json_encode($rankTypeItems));
-
-        return $apiJsonModel->getJson();
+        return $entityMapper->getRankItemsByClanId($clanId);
     }
 }

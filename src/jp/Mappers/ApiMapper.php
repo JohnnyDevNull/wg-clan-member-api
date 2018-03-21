@@ -61,7 +61,7 @@ class ApiMapper extends BaseMapper
 
     /**
      * @param int $clanId
-     * @return JsonModel
+     * @return string
      * @throws \LogicException
      */
     public function getClan($clanId)
@@ -71,11 +71,36 @@ class ApiMapper extends BaseMapper
             throw new \LogicException('not implemented yet');
         }
 
-        $clanInfo = $this->wowsReader->getClanInfo((int)$clanId);
+        return $this->getJson($this->wowsReader->getClanInfo((int)$clanId));
+    }
 
-        $jsonModel = New JsonModel($this->container);
-        $jsonModel->setJson($clanInfo);
+    /**
+     * @param string $name
+     * @return string
+     * @throws \LogicException
+     */
+    public function searchClan($name)
+    {
+        if ($this->wgSettings['api'] != 'worldofwarships')
+        {
+            throw new \LogicException('not implemented yet');
+        }
 
-        return $jsonModel;
+        return $this->getJson($this->wowsReader->getClanList($name));
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     * @throws \LogicException
+     */
+    public function searchPlayer($name)
+    {
+        if ($this->wgSettings['api'] != 'worldofwarships')
+        {
+            throw new \LogicException('not implemented yet');
+        }
+
+        return $this->getJson($this->wowsReader->getAccountList($name));
     }
 }

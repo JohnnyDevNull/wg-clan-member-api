@@ -2,6 +2,7 @@
 
 namespace jp\Misc;
 
+use jp\Models\Api\JsonModel as JsonModel;
 use Interop\Container\ContainerInterface as Container;
 
 class BaseMapper
@@ -44,5 +45,19 @@ class BaseMapper
         {
             $this->logger = $logger;
         }
+    }
+
+    public function getJsonFromArray(array $data)
+    {
+        $apiJsonModel = new JsonModel($this->container);
+        $apiJsonModel->setJson(json_encode($data));
+        return $apiJsonModel->getJson();
+    }
+
+    public function getJson($json)
+    {
+        $apiJsonModel = new JsonModel($this->container);
+        $apiJsonModel->setJson((string)$json);
+        return $apiJsonModel->getJson();
     }
 }

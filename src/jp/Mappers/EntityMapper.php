@@ -4,7 +4,6 @@ namespace jp\Mappers;
 
 use jp\Misc\BaseMapper;
 use jp\Misc\Database;
-use jp\Models\Database\EntityModel;
 use Interop\Container\ContainerInterface as Container;
 
 class EntityMapper extends BaseMapper
@@ -67,7 +66,7 @@ class EntityMapper extends BaseMapper
 
     /**
      * @param int $clanId
-     * @return array
+     * @return string
      */
     public function getMembersByClanId($clanId)
     {
@@ -90,13 +89,13 @@ class EntityMapper extends BaseMapper
             $modelArr['items'][] = (array)$memberModel->getData();
         }
 
-        return $modelArr;
+        return $this->getJsonFromArray($modelArr);
     }
 
     /**
      * @param int $clanId
      * @param int $memberId
-     * @return array
+     * @return string
      */
     public function getMemberModelById($clanId, $memberId)
     {
@@ -121,7 +120,7 @@ class EntityMapper extends BaseMapper
             $memberData['items'][] = (array)$typeModel->getData();
         }
 
-        return $memberData;
+        return $this->getJsonFromArray($memberData);
     }
 
     /**
@@ -151,7 +150,7 @@ class EntityMapper extends BaseMapper
 
     /**
      * @param int $clanId
-     * @return array
+     * @return string
      */
     public function getRankItemsByClanId($clanId)
     {
@@ -201,6 +200,6 @@ class EntityMapper extends BaseMapper
             $typeItemsArray['items'][] = $typeData;
         }
 
-        return $typeItemsArray;
+        return $this->getJsonFromArray($typeItemsArray);
     }
 }
