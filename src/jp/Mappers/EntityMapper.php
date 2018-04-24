@@ -14,7 +14,7 @@ class EntityMapper extends BaseMapper
     private $db;
 
     /**
-     * @param Interop\Container\ContainerInterface $container
+     * @param \Interop\Container\ContainerInterface $container
      * @param \jp\Misc\Database
      */
     public function __construct(Container $container, Database $db = null)
@@ -41,6 +41,7 @@ class EntityMapper extends BaseMapper
     /**
      * @param int $clanId
      * @return array
+     * @throws \Exception
      */
     public function getClanModelById($clanId)
     {
@@ -67,6 +68,7 @@ class EntityMapper extends BaseMapper
     /**
      * @param int $clanId
      * @return string
+     * @throws \Exception
      */
     public function getMembersByClanId($clanId)
     {
@@ -96,6 +98,7 @@ class EntityMapper extends BaseMapper
      * @param int $clanId
      * @param int $memberId
      * @return string
+     * @throws \Exception
      */
     public function getMemberModelById($clanId, $memberId)
     {
@@ -125,6 +128,7 @@ class EntityMapper extends BaseMapper
 
     /**
      * @return array
+     * @throws \Exception
      */
     public function getRankTypes()
     {
@@ -151,6 +155,7 @@ class EntityMapper extends BaseMapper
     /**
      * @param int $clanId
      * @return string
+     * @throws \Exception
      */
     public function getRankItemsByClanId($clanId)
     {

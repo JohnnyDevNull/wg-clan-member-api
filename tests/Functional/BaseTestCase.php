@@ -25,10 +25,13 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Process the application given a request method and URI
      *
-     * @param string $requestMethod the request method (e.g. GET, POST, etc.)
-     * @param string $requestUri the request URI
-     * @param array|object|null $requestData the request data
+     * @param string            $requestMethod the request method (e.g. GET, POST, etc.)
+     * @param string            $requestUri    the request URI
+     * @param array|object|null $requestData   the request data
+     *
      * @return \Slim\Http\Response
+     * @throws \Slim\Exception\MethodNotAllowedException
+     * @throws \Slim\Exception\NotFoundException
      */
     public function runApp($requestMethod, $requestUri, $requestData = null)
     {

@@ -8,7 +8,7 @@ use Interop\Container\ContainerInterface as Container;
 class BaseMapper
 {
     /**
-     * @var Interop\Container\ContainerInterface
+     * @var \Interop\Container\ContainerInterface
      */
     protected $container;
 
@@ -18,22 +18,22 @@ class BaseMapper
     protected $logger;
 
     /**
-     * @var jp\Wargaming\Reader\Clans
+     * @var \jp\Wargaming\Reader\Clans
      */
     protected $clanReader;
 
     /**
-     * @var jp\Wargaming\Reader\Wows
+     * @var \jp\Wargaming\Reader\Wows
      */
     protected $wowsReader;
 
     /**
-     * @var jp\Wargaming\Reader\Wot
+     * @var \jp\Wargaming\Reader\Wot
      */
     protected $wotReader;
 
     /**
-     * @param Interop\Container\ContainerInterface $container
+     * @param \Interop\Container\ContainerInterface $container
      */
     public function __construct(Container $container)
     {

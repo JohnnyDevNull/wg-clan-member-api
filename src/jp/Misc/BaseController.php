@@ -7,7 +7,7 @@ use Interop\Container\ContainerInterface as Container;
 class BaseController
 {
     /**
-     * @var Interop\Container\ContainerInterface 
+     * @var \Interop\Container\ContainerInterface
      */
     protected $container;
 
@@ -17,7 +17,7 @@ class BaseController
     protected $logger;
 
     /**
-     * @param Interop\Container\ContainerInterface $container
+     * @param \Interop\Container\ContainerInterface $container
      */
     public function __construct(Container $container)
     {

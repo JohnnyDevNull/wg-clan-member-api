@@ -12,17 +12,17 @@ use jp\Models\Api\JsonModel as JsonModel;
 class ApiMapper extends BaseMapper
 {
     /**
-     * @var jp\Wargaming\Reader\Clans
+     * @var \jp\Wargaming\Reader\Clans
      */
     protected $clanReader;
 
     /**
-     * @var jp\Wargaming\Reader\Wows
+     * @var \jp\Wargaming\Reader\Wows
      */
     protected $wowsReader;
 
     /**
-     * @var jp\Wargaming\Reader\Wot
+     * @var \jp\Wargaming\Reader\Wot
      */
     protected $wotReader;
 
@@ -32,7 +32,7 @@ class ApiMapper extends BaseMapper
     protected $wgSettings;
 
     /**
-     * @param Interop\Container\ContainerInterface $container
+     * @param \Interop\Container\ContainerInterface $container
      */
     public function __construct(Container $container)
     {

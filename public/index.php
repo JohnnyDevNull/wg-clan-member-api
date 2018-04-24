@@ -33,6 +33,7 @@ $routes = new \jp\Routes();
 $app = new \Slim\App($config->getSettings());
 
 $config->registerLogger($app);
+$config->registerCORS($app);
 $routes->attach($app);
 
 $app->run();

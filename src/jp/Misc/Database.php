@@ -76,6 +76,9 @@ final class Database
         return self::$instance;
     }
 
+    /**
+     * @throws \Exception
+     */
     private function connect()
     {
         if(empty($this->mysqli))
@@ -101,7 +104,7 @@ final class Database
 
     /**
      * @param string $sql
-     * @return \jp\DB
+     * @return \jp\Misc\Database
      */
     public function setSQL($sql)
     {
@@ -132,7 +135,7 @@ final class Database
      * @param string $sql
      * @param bool $fetch [optional] default: false
      * @return false|\mysqli_result|string[]
-     * @throws DB\Exception
+     * @throws \Exception
      */
     public function query($sql, $fetch = false)
     {
@@ -170,6 +173,7 @@ final class Database
     /**
      * @param string $sql
      * @return mixed
+     * @throws \Exception
      */
     public function querySingle($sql)
     {
@@ -186,6 +190,7 @@ final class Database
     /**
      * @param array $array
      * @return string
+     * @throws \Exception
      */
     public function getWhereSqlFromArray($array)
     {
@@ -213,6 +218,7 @@ final class Database
      * @param string $string
      * @param bool $escape [optional] default: false
      * @return string
+     * @throws \Exception
      */
     public function quote($string, $escape = false)
     {
@@ -232,6 +238,7 @@ final class Database
     /**
      * @param string $string
      * @return string
+     * @throws \Exception
      */
     public function escape($string)
     {
