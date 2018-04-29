@@ -3,11 +3,11 @@
 namespace jp\Mappers;
 
 use Interop\Container\ContainerInterface as Container;
-use \jp\Misc\BaseMapper as BaseMapper;
+use jp\Misc\BaseMapper as BaseMapper;
+use jp\Mappers\EntityMapper as EntityMapper;
 use jp\Wargaming\Reader\Clans as ClansReader;
 use jp\Wargaming\Reader\Wot as WotReader;
 use jp\Wargaming\Reader\Wows as WowsReader;
-use jp\Models\Api\JsonModel as JsonModel;
 
 class ApiMapper extends BaseMapper
 {
@@ -30,6 +30,11 @@ class ApiMapper extends BaseMapper
      * @var string[]
      */
     protected $wgSettings;
+
+    /**
+     * @var \jp\Mappers\EntityMapper
+     */
+    protected $entityMapper;
 
     /**
      * @param \Interop\Container\ContainerInterface $container
@@ -57,6 +62,8 @@ class ApiMapper extends BaseMapper
             $this->wgSettings['region'],
             $this->wgSettings['lang']
         );
+
+        $this->entityMapper = new EntityMapper($container);
     }
 
     /**
@@ -71,13 +78,15 @@ class ApiMapper extends BaseMapper
             throw new \LogicException('not implemented yet');
         }
 
-        return $this->getJson($this->wowsReader->getClanInfo((int)$clanId));
+        $clanInfo = $this->wowsReader->getClanInfo((int)$clanId, '', 'members');
+        return $this->getJson($clanInfo);
     }
 
     /**
      * @param int $playerId
+     *
      * @return string
-     * @throws \LogicException
+     * @throws \Exception
      */
     public function getPlayer($playerId)
     {
@@ -86,7 +95,19 @@ class ApiMapper extends BaseMapper
             throw new \LogicException('not implemented yet');
         }
 
-        return $this->getJson($this->wowsReader->getAccountInfo($playerId));
+        $data = $this->entityMapper->getLastResult($playerId, 'player', new \DateTime());
+
+        if ($data === false)
+        {
+           $data = $this->wowsReader->getAccountInfo($playerId);
+           $this->entityMapper->saveResult($playerId, 'player', $data);
+        }
+        else
+        {
+            return $this->getJson($data['data']);
+        }
+
+        return $this->getJson($data);
     }
 
     /**

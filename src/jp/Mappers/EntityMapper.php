@@ -45,9 +45,9 @@ class EntityMapper extends BaseMapper
      */
     public function getClanModelById($clanId)
     {
-        $query = 'SELECT * '.
-                 'FROM clans '.
-                 'WHERE clan_id = ?';
+        $query = 'SELECT * '
+               . 'FROM clans '
+               . 'WHERE clan_id = ?';
 
         $stmt = $this->db->prepare($query);
         $stmt->bind_param('i', $clanId);
@@ -72,9 +72,9 @@ class EntityMapper extends BaseMapper
      */
     public function getMembersByClanId($clanId)
     {
-        $query = 'SELECT * '.
-                 'FROM members '.
-                 'WHERE clan_id = ?';
+        $query = 'SELECT * '
+               . 'FROM members '
+               . 'WHERE clan_id = ?';
 
         $stmt = $this->db->prepare($query);
         $stmt->bind_param('i', $clanId);
@@ -102,10 +102,10 @@ class EntityMapper extends BaseMapper
      */
     public function getMemberModelById($clanId, $memberId)
     {
-        $query = 'SELECT * '.
-                 'FROM members '.
-                 'WHERE id = ? '.
-                 'AND clan_id = ?';
+        $query = 'SELECT * '
+               . 'FROM members '
+               . 'WHERE id = ? '
+               . 'AND clan_id = ?';
 
         $stmt = $this->db->prepare($query);
         $stmt->bind_param('ii', $memberId, $clanId);
@@ -132,8 +132,8 @@ class EntityMapper extends BaseMapper
      */
     public function getRankTypes()
     {
-        $query = 'SELECT * '.
-                 'FROM rank_type';
+        $query = 'SELECT * '
+               . 'FROM rank_type';
 
         $stmt = $this->db->prepare($query);
         $stmt->execute();
@@ -159,8 +159,8 @@ class EntityMapper extends BaseMapper
      */
     public function getRankItemsByClanId($clanId)
     {
-        $queryTypes = 'SELECT * '.
-                      'FROM rank_type';
+        $queryTypes = 'SELECT * '
+                    . 'FROM rank_type';
 
         $stmtTypes = $this->db->prepare($queryTypes);
         $stmtTypes->execute();
@@ -182,10 +182,10 @@ class EntityMapper extends BaseMapper
                 'items' => []
             ];
 
-            $queryItems = 'SELECT * '.
-                          'FROM rank_items '.
-                          'WHERE rank_type_id = ? '.
-                          'AND clan_id = ?';
+            $queryItems = 'SELECT * '
+                        . 'FROM rank_items '
+                        . 'WHERE rank_type_id = ? '
+                        . 'AND clan_id = ?';
 
             $stmtItems = $this->db->prepare($queryItems);
             $stmtItems->bind_param('ii', $typeId, $clanId);
@@ -206,5 +206,61 @@ class EntityMapper extends BaseMapper
         }
 
         return $this->getJsonFromArray($typeItemsArray);
+    }
+
+    /**
+     * @param  int      $id
+     * @param  string   $context
+     * @param \DateTime $dateTime
+     *
+     * @return array|false
+     * @throws \Exception
+     */
+    public function getLastResult($id, $context, \DateTime $dateTime)
+    {
+        $sql = 'SELECT * '
+             . 'FROM results '
+             . 'WHERE id = ? '
+             . 'AND type = ? '
+             . 'AND result_time > ? '
+             . 'ORDER BY result_time desc '
+             . 'LIMIT 1';
+
+        $offset = $this->container->get('settings')['wg']['request_offset'];
+        $tstamp = $dateTime->getTimestamp() - $offset;
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('isi', $id, $context, $tstamp);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if($result === false || $result->num_rows === 0)
+        {
+            return false;
+        }
+
+        return $result->fetch_assoc();
+    }
+
+    /**
+     * @param int    $id
+     * @param string $context
+     * @param array  $data
+     *
+     * @throws \Exception
+     */
+    public function saveResult($id, $context, $data)
+    {
+        // @todo result halbstündig updaten, sodass nur 1 Eintrag pro Spieler pro Tag entsteht. Datenbank schonen...
+        // @todo für clans nur 1 Result speichern, dieses halbstündig updaten
+
+        $sql = 'INSERT INTO results (id, type, result_time, data) '
+             . 'VALUES (?,?,?,?) ';
+        $dateTime = new \DateTime();
+        $tstamp = $dateTime->getTimestamp();
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('isis', $id, $context, $tstamp, $data);
+        $stmt->execute();
     }
 }
