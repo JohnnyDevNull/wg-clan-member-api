@@ -208,6 +208,37 @@ final class Database
     }
 
     /**
+     * @param bool $mode
+     */
+    public function autocommit($mode)
+    {
+        $this->mysqli->autocommit($mode);
+    }
+
+    /**
+     * @param int    $flags
+     * @param string $name
+     */
+    public function begin($flags = 0, $name = null)
+    {
+        $this->mysqli->begin_transaction($flags, $name);
+    }
+
+    /**
+     * @param int $flags
+     * @param string $name
+     */
+    public function commit($flags = null, $name = null)
+    {
+        $this->mysqli->commit($flags, $name);
+    }
+
+    public function rollback()
+    {
+        $this->mysqli->rollback();
+    }
+
+    /**
      * @param array $array
      * @return string
      * @throws \Exception

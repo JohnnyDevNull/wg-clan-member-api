@@ -84,6 +84,7 @@ class ApiMapper extends BaseMapper
         if ($data === false)
         {
             $data = $this->wowsReader->getClanInfo((int)$clanId, '', 'members');
+            $this->entityMapper->saveMembers($clanId, $data);
             $this->entityMapper->saveResult($clanId, 'clan', $data, true);
         }
         else
@@ -111,7 +112,13 @@ class ApiMapper extends BaseMapper
 
         if ($data === false)
         {
-           $data = $this->wowsReader->getAccountInfo($playerId);
+           $data = $this->wowsReader->getAccountInfo($playerId, '','',
+                'statistics.pvp_solo,'
+               .'statistics.pvp_div2,'
+               .'statistics.pvp_div3,'
+               .'statistics.club,'
+               .'statistics.pve,'
+               .'statistics.rank_solo');
            $this->entityMapper->saveResult($playerId, 'player', $data);
         }
         else

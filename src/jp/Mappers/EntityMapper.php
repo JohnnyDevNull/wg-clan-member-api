@@ -287,8 +287,8 @@ class EntityMapper extends BaseMapper
 
         if ($doUpdate)
         {
-            $sql = 'UPDATE result'
-                 . 'SET result_time = ? data = ? '
+            $sql = 'UPDATE results '
+                 . 'SET result_time = ?, data = ? '
                  . 'WHERE id = ? '
                  . 'AND type = ? ';
 
@@ -304,6 +304,89 @@ class EntityMapper extends BaseMapper
             $stmt = $this->db->prepare($sql);
             $stmt->bind_param('isis', $id, $context, $timestamp, $data);
             $this->db->execute($stmt);
+        }
+    }
+
+    /**
+     * @param int    $clanId
+     * @param string $data should be a json string
+     *
+     * @throws \Exception
+     */
+    public function saveMembers($clanId, $data)
+    {
+        $jsonData = json_decode($data);
+        $clanInfo = $jsonData->data->{$clanId};
+
+        $sql = 'UPDATE members '
+             . 'SET is_member = 0 '
+             . 'WHERE clan_id = ?';
+        $isMemberStmt = $this->db->prepare($sql);
+
+        $sql = 'INSERT INTO members (id, clan_id, name, role, date_joined, is_member) '
+             . 'VALUES(?,?,?,?,?,?)';
+        $insertMemberStmt = $this->db->prepare($sql);
+
+        $sql = 'UPDATE members '
+             . 'SET is_member = ? '
+             . '  , name = ? '
+             . '  , role = ? '
+             . '  , date_joined = ? '
+             . 'WHERE clan_id = ? '
+             . 'AND id = ?';
+        $updateMemberStmt = $this->db->prepare($sql);
+
+
+        $sql = 'SELECT COUNT(1) AS count '
+             . 'FROM members '
+             . 'WHERE EXISTS ( SELECT 1 '
+                            . 'FROM members '
+                            . 'WHERE clan_id = ? '
+                            . 'AND id = ? )';
+        $memberExistsStmt = $this->db->prepare($sql);
+
+        try
+        {
+            $this->db->autocommit(false);
+            $this->db->begin(0, 'insert_members');
+
+            $isMemberStmt->bind_param('i', $clanId);
+            $this->db->execute($isMemberStmt);
+
+            foreach ($clanInfo->members as $member)
+            {
+                $memberId = (int)$member->account_id;
+                $memberExistsStmt->bind_param('ii',$clanId, $memberId);
+                $this->db->execute($memberExistsStmt);
+                $res = $memberExistsStmt->get_result()->fetch_object();
+
+                $isMember = 1;
+                $name = (string)$member->account_name;
+                $role = (string)$member->role;
+                $dateJoined = (int)$member->joined_at;
+
+                if((int)$res->count > 0)
+                {
+                    $updateMemberStmt->bind_param('issiii', $isMember, $name, $role, $dateJoined, $clanId, $memberId);
+                    $this->db->execute($updateMemberStmt);
+                }
+                else
+                {
+                    $insertMemberStmt->bind_param('iissii', $memberId, $clanId, $name, $role, $dateJoined, $isMember);
+                    $this->db->execute($insertMemberStmt);
+                }
+            }
+
+            $this->db->commit();
+        }
+        catch(\Exception $e)
+        {
+            $this->db->rollback();
+            throw $e;
+        }
+        finally
+        {
+            $this->db->autocommit(true);
         }
     }
 }
