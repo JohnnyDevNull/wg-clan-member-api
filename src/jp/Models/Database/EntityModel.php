@@ -47,9 +47,4 @@ class EntityModel extends BaseModel
 
         return null;
     }
-
-    public function toArray()
-    {
-
-    }
 }

@@ -9,6 +9,13 @@ use Psr\Http\Message\RequestInterface as Request;
 
 class IndexController extends BaseController
 {
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param                                     $args
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     public function index(Request $request, Response $response, $args)
     {
         $response->getBody()->write (
@@ -19,6 +26,14 @@ class IndexController extends BaseController
         return $response;
     }
 
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param                                     $args
+     *
+     * @return string
+     * @throws \Exception
+     */
     public function getRanks(Request $request, Response $response, $args)
     {
         $entityMapper = new EntityMapper($this->container);

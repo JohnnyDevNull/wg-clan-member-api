@@ -68,8 +68,9 @@ class ApiMapper extends BaseMapper
 
     /**
      * @param int $clanId
+     *
      * @return string
-     * @throws \LogicException
+     * @throws \Exception
      */
     public function getClan($clanId)
     {
@@ -78,8 +79,19 @@ class ApiMapper extends BaseMapper
             throw new \LogicException('not implemented yet');
         }
 
-        $clanInfo = $this->wowsReader->getClanInfo((int)$clanId, '', 'members');
-        return $this->getJson($clanInfo);
+        $data = $this->entityMapper->getLastResult($clanId, 'clan', new \DateTime());
+
+        if ($data === false)
+        {
+            $data = $this->wowsReader->getClanInfo((int)$clanId, '', 'members');
+            $this->entityMapper->saveResult($clanId, 'clan', $data, true);
+        }
+        else
+        {
+            return $this->getJson($data['data']);
+        }
+
+        return $this->getJson($data);
     }
 
     /**

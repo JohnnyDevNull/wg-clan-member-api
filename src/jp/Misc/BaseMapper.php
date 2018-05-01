@@ -47,6 +47,11 @@ class BaseMapper
         }
     }
 
+    /**
+     * @param array $data
+     *
+     * @return string
+     */
     public function getJsonFromArray(array $data)
     {
         $apiJsonModel = new JsonModel($this->container);
@@ -54,6 +59,11 @@ class BaseMapper
         return $apiJsonModel->getJson();
     }
 
+    /**
+     * @param $json
+     *
+     * @return string
+     */
     public function getJson($json)
     {
         $apiJsonModel = new JsonModel($this->container);

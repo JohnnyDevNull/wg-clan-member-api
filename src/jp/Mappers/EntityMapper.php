@@ -4,6 +4,7 @@ namespace jp\Mappers;
 
 use jp\Misc\BaseMapper;
 use jp\Misc\Database;
+use jp\Models\Database\EntityModel;
 use Interop\Container\ContainerInterface as Container;
 
 class EntityMapper extends BaseMapper
@@ -40,18 +41,19 @@ class EntityMapper extends BaseMapper
 
     /**
      * @param int $clanId
+     *
      * @return array
      * @throws \Exception
      */
     public function getClanModelById($clanId)
     {
-        $query = 'SELECT * '
+        $sql = 'SELECT * '
                . 'FROM clans '
                . 'WHERE clan_id = ?';
 
-        $stmt = $this->db->prepare($query);
+        $stmt = $this->db->prepare($sql);
         $stmt->bind_param('i', $clanId);
-        $stmt->execute();
+        $this->db->execute($stmt);
 
         if ( ($res = $stmt->get_result()) != false )
         {
@@ -67,18 +69,19 @@ class EntityMapper extends BaseMapper
 
     /**
      * @param int $clanId
+     *
      * @return string
      * @throws \Exception
      */
     public function getMembersByClanId($clanId)
     {
-        $query = 'SELECT * '
-               . 'FROM members '
-               . 'WHERE clan_id = ?';
+        $sql = 'SELECT * '
+             . 'FROM members '
+             . 'WHERE clan_id = ?';
 
-        $stmt = $this->db->prepare($query);
+        $stmt = $this->db->prepare($sql);
         $stmt->bind_param('i', $clanId);
-        $stmt->execute();
+        $this->db->execute($stmt);
         $res = $stmt->get_result();
 
         $modelArr['items'] = [];
@@ -97,19 +100,20 @@ class EntityMapper extends BaseMapper
     /**
      * @param int $clanId
      * @param int $memberId
+     *
      * @return string
      * @throws \Exception
      */
     public function getMemberModelById($clanId, $memberId)
     {
-        $query = 'SELECT * '
-               . 'FROM members '
-               . 'WHERE id = ? '
-               . 'AND clan_id = ?';
+        $sql = 'SELECT * '
+             . 'FROM members '
+             . 'WHERE id = ? '
+             . 'AND clan_id = ?';
 
-        $stmt = $this->db->prepare($query);
+        $stmt = $this->db->prepare($sql);
         $stmt->bind_param('ii', $memberId, $clanId);
-        $stmt->execute();
+        $this->db->execute($stmt);
 
         $memberData['items'] = [];
 
@@ -132,11 +136,11 @@ class EntityMapper extends BaseMapper
      */
     public function getRankTypes()
     {
-        $query = 'SELECT * '
-               . 'FROM rank_type';
+        $sql = 'SELECT * '
+             . 'FROM rank_type';
 
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
+        $stmt = $this->db->prepare($sql);
+        $this->db->execute($stmt);
         $res = $stmt->get_result();
 
         $modelArr['items'] = [];
@@ -154,6 +158,7 @@ class EntityMapper extends BaseMapper
 
     /**
      * @param int $clanId
+     *
      * @return string
      * @throws \Exception
      */
@@ -163,7 +168,7 @@ class EntityMapper extends BaseMapper
                     . 'FROM rank_type';
 
         $stmtTypes = $this->db->prepare($queryTypes);
-        $stmtTypes->execute();
+        $this->db->execute($stmtTypes);
         $resTypes = $stmtTypes->get_result();
 
         $typeItemsArray['items'] = [];
@@ -189,7 +194,7 @@ class EntityMapper extends BaseMapper
 
             $stmtItems = $this->db->prepare($queryItems);
             $stmtItems->bind_param('ii', $typeId, $clanId);
-            $stmtItems->execute();
+            $this->db->execute($stmtItems);
             $resItems = $stmtItems->get_result();
 
             $modelArr = [];
@@ -231,7 +236,7 @@ class EntityMapper extends BaseMapper
 
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param('isi', $id, $context, $tstamp);
-        $stmt->execute();
+        $this->db->execute($stmt);
         $result = $stmt->get_result();
 
         if($result === false || $result->num_rows === 0)
@@ -245,22 +250,60 @@ class EntityMapper extends BaseMapper
     /**
      * @param int    $id
      * @param string $context
-     * @param array  $data
+     * @param string $data
+     * @param bool   $forceUpdate [optional] default: false
      *
      * @throws \Exception
      */
-    public function saveResult($id, $context, $data)
+    public function saveResult($id, $context, $data, $forceUpdate = false)
     {
-        // @todo result halbstündig updaten, sodass nur 1 Eintrag pro Spieler pro Tag entsteht. Datenbank schonen...
-        // @todo für clans nur 1 Result speichern, dieses halbstündig updaten
+        $doUpdate = false;
 
-        $sql = 'INSERT INTO results (id, type, result_time, data) '
-             . 'VALUES (?,?,?,?) ';
-        $dateTime = new \DateTime();
-        $tstamp = $dateTime->getTimestamp();
+        $sql = 'SELECT result_time '
+             . 'FROM results '
+             . 'WHERE id = ? '
+             . 'AND type = ? '
+             . 'ORDER BY result_time DESC '
+             . 'LIMIT 1';
 
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param('isis', $id, $context, $tstamp, $data);
-        $stmt->execute();
+        $stmt->bind_param('is', $id, $context);
+        $this->db->execute($stmt);
+        $res = $stmt->get_result();
+
+        if($res !== false && ($row = $res->fetch_object()) !== null)
+        {
+            $date = date('d.m.Y 00:00:00');
+            $startOfDay = strtotime($date);
+            $lastResult = (int)$row->result_time;
+
+            if ($lastResult > $startOfDay || $forceUpdate)
+            {
+                $doUpdate = true;
+            }
+        }
+
+        $timestamp = time();
+
+        if ($doUpdate)
+        {
+            $sql = 'UPDATE result'
+                 . 'SET result_time = ? data = ? '
+                 . 'WHERE id = ? '
+                 . 'AND type = ? ';
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param('isis', $timestamp, $data, $id, $context);
+            $this->db->execute($stmt);
+        }
+        else
+        {
+            $sql = 'INSERT INTO results (id, type, result_time, data ) '
+                 . 'VALUES (?,?,?,? )';
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param('isis', $id, $context, $timestamp, $data);
+            $this->db->execute($stmt);
+        }
     }
 }

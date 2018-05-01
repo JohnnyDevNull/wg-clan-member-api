@@ -16,6 +16,13 @@ class SearchController extends BaseController
         return filter_var($args['name'], FILTER_SANITIZE_STRING);
     }
 
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param array                               $args
+     *
+     * @return string
+     */
     public function getPlayer(Request $request, Response $response, $args)
     {
         $name = $this->getNameFromArgs($args);
@@ -23,6 +30,13 @@ class SearchController extends BaseController
         return $apiMapper->searchPlayer($name);
     }
 
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param array                               $args
+     *
+     * @return string
+     */
     public function getClan(Request $request, Response $response, $args)
     {
         $name = $this->getNameFromArgs($args);

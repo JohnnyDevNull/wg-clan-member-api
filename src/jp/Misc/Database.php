@@ -44,6 +44,13 @@ final class Database
      */
     private $mysqli;
 
+    /**
+     * @param string $host
+     * @param string $user
+     * @param string $pass
+     * @param string $db
+     * @param int    $port
+     */
     private function __construct($host, $user, $pass, $db, $port)
     {
         $this->host = (string)$host;
@@ -125,10 +132,23 @@ final class Database
 
         if (!($stmt = $this->mysqli->prepare($this->sql)))
         {
-            throw new \Exception("Prepare failed: (" . $this->mysqli->prepare->errno . ") " . $this->mysqli->error);
+            throw new \Exception("Prepare failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error);
         }
 
         return $stmt;
+    }
+
+    /**
+     * @param \mysqli_stmt $stmt
+     *
+     * @throws \Exception
+     */
+    public function execute(\mysqli_stmt $stmt)
+    {
+        if(!$stmt->execute())
+        {
+            throw new \Exception("Execute failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error);
+        }
     }
 
     /**
@@ -150,7 +170,7 @@ final class Database
 
         if ($this->mysqli->errno)
         {
-            throw new Exception('MySQLi Query Error: '.$this->mysqli->error.'; Query: '.$this->getLastQuery());
+            throw new \Exception('MySQLi Query Error: '.$this->mysqli->error.'; Query: '.$this->getLastQuery());
         }
 
         if ($fetch)

@@ -27,6 +27,12 @@ class ClansController extends BaseController
         return (int)$args['memberId'];
     }
 
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     public function getList(Request $request, Response $response)
     {
         $clanList = json_encode
@@ -40,6 +46,13 @@ class ClansController extends BaseController
         return $response;
     }
 
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param array                               $args
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     public function getClan(Request $request, Response $response, $args)
     {
         $clanId = $this->getClanIdFromArgs($args);
@@ -59,6 +72,13 @@ class ClansController extends BaseController
         return $response;
     }
 
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param array                               $args
+     *
+     * @return string
+     */
     public function getClanInfo(Request $request, Response $response, $args)
     {
         $clanId = $this->getClanIdFromArgs($args);
@@ -66,6 +86,14 @@ class ClansController extends BaseController
         return $apiMapper->getClan($clanId);
     }
 
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param array                               $args
+     *
+     * @return string
+     * @throws \Exception
+     */
     public function getMemberList(Request $request, Response $response, $args)
     {
         $clanId = $this->getClanIdFromArgs($args);
@@ -73,6 +101,14 @@ class ClansController extends BaseController
         return $entityMapper->getMembersByClanId($clanId);
     }
 
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param array                               $args
+     *
+     * @return string
+     * @throws \Exception
+     */
     public function getMember(Request $request, Response $response, $args)
     {
         $clanId = $this->getClanIdFromArgs($args);
@@ -81,6 +117,14 @@ class ClansController extends BaseController
         return $entityMapper->getMemberModelById($clanId, $memberId);
     }
 
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param array                               $args
+     *
+     * @return string
+     * @throws \Exception
+     */
     public function getRanks(Request $request, Response $response, $args)
     {
         $clanId = $this->getClanIdFromArgs($args);
