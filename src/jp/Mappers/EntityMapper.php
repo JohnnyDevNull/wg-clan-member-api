@@ -290,10 +290,11 @@ class EntityMapper extends BaseMapper
             $sql = 'UPDATE results '
                  . 'SET result_time = ?, data = ? '
                  . 'WHERE id = ? '
-                 . 'AND type = ? ';
+                 . 'AND type = ? '
+                 . 'AND result_time = ?';
 
             $stmt = $this->db->prepare($sql);
-            $stmt->bind_param('isis', $timestamp, $data, $id, $context);
+            $stmt->bind_param('isisi', $timestamp, $data, $id, $context, $lastResult);
             $this->db->execute($stmt);
         }
         else
