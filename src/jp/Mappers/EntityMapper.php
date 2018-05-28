@@ -395,7 +395,7 @@ class EntityMapper extends BaseMapper
 
             $playerStats = $playerInfo->statistics;
             $playerStats->account_id = $accountId;
-            $memberStats['member_stats'][$accountId] = $playerStats;
+            $memberStats['member_stats'][] = $playerStats;
         }
 
         return $this->getJsonFromArray($memberStats);
