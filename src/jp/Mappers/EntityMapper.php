@@ -383,10 +383,17 @@ class EntityMapper extends BaseMapper
             'member_stats' => []
         ];
 
-        while ($result && ($row = $result->fetch_object())) {
+        $apiMapper = new ApiMapper($this->container);
+
+        while ($result !== false && ($row = $result->fetch_object()) != false) {
             $accountId = (int)$row->id;
-            $apiMapper = new ApiMapper($this->container);
-            $playerStats = json_decode($apiMapper->getPlayer($accountId))->data->$accountId->statistics;
+            $playerInfo = json_decode($apiMapper->getPlayer($accountId))->data->{$accountId};
+
+            if ((bool)$playerInfo->hidden_profile) {
+                continue;
+            }
+
+            $playerStats = $playerInfo->statistics;
             $playerStats->account_id = $accountId;
             $memberStats['member_stats'][$accountId] = $playerStats;
         }
