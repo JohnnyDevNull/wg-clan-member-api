@@ -10,7 +10,7 @@ use Interop\Container\ContainerInterface as Container;
 class EntityMapper extends BaseMapper
 {
     /**
-     * @var \jp\Misc\Database 
+     * @var \jp\Misc\Database
      */
     private $db;
 
@@ -22,12 +22,9 @@ class EntityMapper extends BaseMapper
     {
         parent::__construct($container);
 
-        if ($db !== null)
-        {
+        if ($db !== null) {
             $this->db = $db;
-        }
-        else
-        {
+        } else {
             $dbConf = $container->get('settings')['db'];
             $this->db = Database::getInstance(
                 $dbConf['host'],
@@ -55,8 +52,7 @@ class EntityMapper extends BaseMapper
         $stmt->bind_param('i', $clanId);
         $this->db->execute($stmt);
 
-        if ( ($res = $stmt->get_result()) != false )
-        {
+        if (($res = $stmt->get_result()) != false) {
             $entity = $res->fetch_object();
             $clanModel = new EntityModel($this->container);
             $clanModel->setData($entity);
@@ -86,8 +82,7 @@ class EntityMapper extends BaseMapper
 
         $modelArr['items'] = [];
 
-        while ( $res != false && ($entity = $res->fetch_object()) != false )
-        {
+        while ($res != false && ($entity = $res->fetch_object()) != false) {
             $memberModel = new EntityModel($this->container);
             $memberModel->setData($entity);
 
@@ -117,8 +112,7 @@ class EntityMapper extends BaseMapper
 
         $memberData['items'] = [];
 
-        if ( ($res = $stmt->get_result()) != false )
-        {
+        if (($res = $stmt->get_result()) != false) {
             $entity = $res->fetch_object();
 
             $typeModel = new EntityModel($this->container);
@@ -145,8 +139,7 @@ class EntityMapper extends BaseMapper
 
         $modelArr['items'] = [];
 
-        while ( $res != false && ($entity = $res->fetch_object()) != false )
-        {
+        while ($res != false && ($entity = $res->fetch_object()) != false) {
             $typeModel = new EntityModel($this->container);
             $typeModel->setData($entity);
 
@@ -173,8 +166,7 @@ class EntityMapper extends BaseMapper
 
         $typeItemsArray['items'] = [];
 
-        while ( $resTypes != false && ($typeEntity = $resTypes->fetch_object()) != false )
-        {
+        while ($resTypes != false && ($typeEntity = $resTypes->fetch_object()) != false) {
             $typeModel = new EntityModel($this->container);
             $typeModel->setData($typeEntity);
 
@@ -199,8 +191,7 @@ class EntityMapper extends BaseMapper
 
             $modelArr = [];
 
-            while ( $resItems != false && ($rankItemEntity = $resItems->fetch_object()) != false )
-            {
+            while ($resItems != false && ($rankItemEntity = $resItems->fetch_object()) != false) {
                 $itemModel = new EntityModel($this->container);
                 $itemModel->setData($rankItemEntity);
                 $modelArr[] = (array)$itemModel->getData();
@@ -239,8 +230,7 @@ class EntityMapper extends BaseMapper
         $this->db->execute($stmt);
         $result = $stmt->get_result();
 
-        if($result === false || $result->num_rows === 0)
-        {
+        if ($result === false || $result->num_rows === 0) {
             return false;
         }
 
@@ -271,22 +261,19 @@ class EntityMapper extends BaseMapper
         $this->db->execute($stmt);
         $res = $stmt->get_result();
 
-        if($res !== false && ($row = $res->fetch_object()) !== null)
-        {
+        if ($res !== false && ($row = $res->fetch_object()) !== null) {
             $date = date('d.m.Y 00:00:00');
             $startOfDay = strtotime($date);
             $lastResult = (int)$row->result_time;
 
-            if ($lastResult > $startOfDay || $forceUpdate)
-            {
+            if ($lastResult > $startOfDay || $forceUpdate) {
                 $doUpdate = true;
             }
         }
 
         $timestamp = time();
 
-        if ($doUpdate)
-        {
+        if ($doUpdate) {
             $sql = 'UPDATE results '
                  . 'SET result_time = ?, data = ? '
                  . 'WHERE id = ? '
@@ -296,9 +283,7 @@ class EntityMapper extends BaseMapper
             $stmt = $this->db->prepare($sql);
             $stmt->bind_param('isisi', $timestamp, $data, $id, $context, $lastResult);
             $this->db->execute($stmt);
-        }
-        else
-        {
+        } else {
             $sql = 'INSERT INTO results (id, type, result_time, data ) '
                  . 'VALUES (?,?,?,? )';
 
@@ -346,18 +331,16 @@ class EntityMapper extends BaseMapper
                             . 'AND id = ? )';
         $memberExistsStmt = $this->db->prepare($sql);
 
-        try
-        {
+        try {
             $this->db->autocommit(false);
             $this->db->begin(0, 'insert_members');
 
             $isMemberStmt->bind_param('i', $clanId);
             $this->db->execute($isMemberStmt);
 
-            foreach ($clanInfo->members as $member)
-            {
+            foreach ($clanInfo->members as $member) {
                 $memberId = (int)$member->account_id;
-                $memberExistsStmt->bind_param('ii',$clanId, $memberId);
+                $memberExistsStmt->bind_param('ii', $clanId, $memberId);
                 $this->db->execute($memberExistsStmt);
                 $res = $memberExistsStmt->get_result()->fetch_object();
 
@@ -366,28 +349,48 @@ class EntityMapper extends BaseMapper
                 $role = (string)$member->role;
                 $dateJoined = (int)$member->joined_at;
 
-                if((int)$res->count > 0)
-                {
+                if ((int)$res->count > 0) {
                     $updateMemberStmt->bind_param('issiii', $isMember, $name, $role, $dateJoined, $clanId, $memberId);
                     $this->db->execute($updateMemberStmt);
-                }
-                else
-                {
+                } else {
                     $insertMemberStmt->bind_param('iissii', $memberId, $clanId, $name, $role, $dateJoined, $isMember);
                     $this->db->execute($insertMemberStmt);
                 }
             }
 
             $this->db->commit();
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             $this->db->rollback();
             throw $e;
-        }
-        finally
-        {
+        } finally {
             $this->db->autocommit(true);
         }
+    }
+
+    public function getMemberStats($clanId)
+    {
+        $sql = 'SELECT id '
+             . 'FROM members '
+             . 'WHERE clan_id = ? '
+             . 'AND is_member = 1';
+        $memberStmt = $this->db->prepare($sql);
+        $memberStmt->bind_param('i', $clanId);
+        $this->db->execute($memberStmt);
+        $result = $memberStmt->get_result();
+
+        $memberStats = [
+            'clan_id' => $clanId,
+            'member_stats' => []
+        ];
+
+        while ($result && ($row = $result->fetch_object())) {
+            $accountId = (int)$row->id;
+            $apiMapper = new ApiMapper($this->container);
+            $playerStats = json_decode($apiMapper->getPlayer($accountId))->data->$accountId->statistics;
+            $playerStats->account_id = $accountId;
+            $memberStats['member_stats'][$accountId] = $playerStats;
+        }
+
+        return $this->getJsonFromArray($memberStats);
     }
 }

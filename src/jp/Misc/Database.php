@@ -75,8 +75,7 @@ final class Database
      */
     public static function getInstance($host, $user, $pass, $db, $port)
     {
-        if (empty(self::$instance))
-        {
+        if (empty(self::$instance)) {
             self::$instance = new Database($host, $user, $pass, $db, $port);
         }
 
@@ -88,22 +87,21 @@ final class Database
      */
     private function connect()
     {
-        if(empty($this->mysqli))
-        {
+        if (empty($this->mysqli)) {
             $this->mysqli = new \mysqli();
             $this->mysqli->connect($this->host, $this->user, $this->pass, $this->db, $this->port);
 
-            if ($this->mysqli->connect_errno != 0)
-            {
-                throw new \Exception("Connection Error: (" . $this->mysqli->connect_errno . ") " . $this->mysqli->connect_error);
+            if ($this->mysqli->connect_errno != 0) {
+                throw new \Exception(
+                    "Connection Error: (" . $this->mysqli->connect_errno . ") " . $this->mysqli->connect_error
+                );
             }
         }
     }
 
     private function disconnect()
     {
-        if(!empty($this->mysqli))
-        {
+        if (!empty($this->mysqli)) {
             $this->mysqli->close();
             $this->mysqli = null;
         }
@@ -130,8 +128,7 @@ final class Database
 
         $this->setSQL($query);
 
-        if (!($stmt = $this->mysqli->prepare($this->sql)))
-        {
+        if (!($stmt = $this->mysqli->prepare($this->sql))) {
             throw new \Exception("Prepare failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error);
         }
 
@@ -145,8 +142,7 @@ final class Database
      */
     public function execute(\mysqli_stmt $stmt)
     {
-        if(!$stmt->execute())
-        {
+        if (!$stmt->execute()) {
             throw new \Exception("Execute failed: (" . $this->mysqli->errno . ") " . $this->mysqli->error);
         }
     }
@@ -159,8 +155,7 @@ final class Database
      */
     public function query($sql, $fetch = false)
     {
-        if ($this->mysqli === false)
-        {
+        if ($this->mysqli === false) {
             $this->connect();
         }
 
@@ -168,22 +163,17 @@ final class Database
 
         $result = $this->mysqli->query($this->sql);
 
-        if ($this->mysqli->errno)
-        {
+        if ($this->mysqli->errno) {
             throw new \Exception('MySQLi Query Error: '.$this->mysqli->error.'; Query: '.$this->getLastQuery());
         }
 
-        if ($fetch)
-        {
+        if ($fetch) {
             $ret = array();
 
-            while ($result && ($row = $result->fetch_assoc()))
-            {
+            while ($result && ($row = $result->fetch_assoc())) {
                 $ret[] = $row;
             }
-        }
-        else
-        {
+        } else {
             $ret = $result;
         }
 
@@ -199,8 +189,7 @@ final class Database
     {
         $ret = $this->query($sql, true);
 
-        if(is_array($ret))
-        {
+        if (is_array($ret)) {
             $ret = reset($ret);
         }
 
@@ -247,17 +236,12 @@ final class Database
     {
         $where = array();
 
-        foreach ($array as $key => $value)
-        {
-            if (is_array($value))
-            {
-                foreach ($value as $key => $value)
-                {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                foreach ($value as $key => $value) {
                     $where[] = '`'.$key.'` = "'.$this->escape($value).'"';
                 }
-            }
-            else
-            {
+            } else {
                 $where[] = '`'.$key.'` = "'.$this->escape($value).'"';
             }
         }
@@ -273,13 +257,11 @@ final class Database
      */
     public function quote($string, $escape = false)
     {
-        if (empty($this->mysqli))
-        {
+        if (empty($this->mysqli)) {
             $this->connect();
         }
 
-        if ($escape)
-        {
+        if ($escape) {
             $string = $this->escape($string);
         }
 
@@ -293,8 +275,7 @@ final class Database
      */
     public function escape($string)
     {
-        if (empty($this->mysqli))
-        {
+        if (empty($this->mysqli)) {
             $this->connect();
         }
 

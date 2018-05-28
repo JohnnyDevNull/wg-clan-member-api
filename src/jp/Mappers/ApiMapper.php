@@ -45,19 +45,19 @@ class ApiMapper extends BaseMapper
 
         $this->wgSettings = $container->get('settings')['wg'];
 
-        $this->clanReader = new ClansReader (
+        $this->clanReader = new ClansReader(
             $this->wgSettings['app_id'],
             $this->wgSettings['region'],
             $this->wgSettings['lang']
         );
 
-        $this->wowsReader = new WowsReader (
+        $this->wowsReader = new WowsReader(
             $this->wgSettings['app_id'],
             $this->wgSettings['region'],
             $this->wgSettings['lang']
         );
 
-        $this->wotReader = new WotReader (
+        $this->wotReader = new WotReader(
             $this->wgSettings['app_id'],
             $this->wgSettings['region'],
             $this->wgSettings['lang']
@@ -74,21 +74,17 @@ class ApiMapper extends BaseMapper
      */
     public function getClan($clanId)
     {
-        if ($this->wgSettings['api'] != 'worldofwarships')
-        {
+        if ($this->wgSettings['api'] != 'worldofwarships') {
             throw new \LogicException('not implemented yet');
         }
 
         $data = $this->entityMapper->getLastResult($clanId, 'clan', new \DateTime());
 
-        if ($data === false)
-        {
+        if ($data === false) {
             $data = $this->wowsReader->getClanInfo((int)$clanId, '', 'members');
             $this->entityMapper->saveMembers($clanId, $data);
-            $this->entityMapper->saveResult($clanId, 'clan', $data, true);
-        }
-        else
-        {
+            $this->entityMapper->saveResult($clanId, 'clan', $data, +-true);
+        } else {
             return $this->getJson($data['data']);
         }
 
@@ -103,26 +99,26 @@ class ApiMapper extends BaseMapper
      */
     public function getPlayer($playerId)
     {
-        if ($this->wgSettings['api'] != 'worldofwarships')
-        {
+        if ($this->wgSettings['api'] != 'worldofwarships') {
             throw new \LogicException('not implemented yet');
         }
 
         $data = $this->entityMapper->getLastResult($playerId, 'player', new \DateTime());
 
-        if ($data === false)
-        {
-           $data = $this->wowsReader->getAccountInfo($playerId, '','',
+        if ($data === false) {
+            $data = $this->wowsReader->getAccountInfo(
+                $playerId,
+                '',
+                '',
                 'statistics.pvp_solo,'
-               .'statistics.pvp_div2,'
-               .'statistics.pvp_div3,'
-               .'statistics.club,'
-               .'statistics.pve,'
-               .'statistics.rank_solo');
-           $this->entityMapper->saveResult($playerId, 'player', $data);
-        }
-        else
-        {
+                    .'statistics.pvp_div2,'
+                    .'statistics.pvp_div3,'
+                    .'statistics.club,'
+                    .'statistics.pve,'
+                    .'statistics.rank_solo'
+            );
+            $this->entityMapper->saveResult($playerId, 'player', $data);
+        } else {
             return $this->getJson($data['data']);
         }
 
@@ -136,8 +132,7 @@ class ApiMapper extends BaseMapper
      */
     public function searchClan($name)
     {
-        if ($this->wgSettings['api'] != 'worldofwarships')
-        {
+        if ($this->wgSettings['api'] != 'worldofwarships') {
             throw new \LogicException('not implemented yet');
         }
 
@@ -151,8 +146,7 @@ class ApiMapper extends BaseMapper
      */
     public function searchPlayer($name)
     {
-        if ($this->wgSettings['api'] != 'worldofwarships')
-        {
+        if ($this->wgSettings['api'] != 'worldofwarships') {
             throw new \LogicException('not implemented yet');
         }
 

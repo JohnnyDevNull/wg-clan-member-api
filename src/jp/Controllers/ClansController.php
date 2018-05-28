@@ -35,8 +35,7 @@ class ClansController extends BaseController
      */
     public function getList(Request $request, Response $response)
     {
-        $clanList = json_encode
-        (
+        $clanList = json_encode(
             [ 'items' => $this->container->get('settings')['clans'] ],
             JSON_PRETTY_PRINT
         );
@@ -59,10 +58,8 @@ class ClansController extends BaseController
         $clans = $this->container->get('settings')['clans'];
         $res = [ 'items' => [] ];
 
-        foreach($clans as $clan)
-        {
-            if ((int)$clan['id'] == $clanId)
-            {
+        foreach ($clans as $clan) {
+            if ((int)$clan['id'] == $clanId) {
                 $res['items'][] = $clan;
             }
         }
@@ -130,5 +127,20 @@ class ClansController extends BaseController
         $clanId = $this->getClanIdFromArgs($args);
         $entityMapper = new EntityMapper($this->container);
         return $entityMapper->getRankItemsByClanId($clanId);
+    }
+
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param array                               $args
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getMemberStats(Request $request, Response $response, $args)
+    {
+        $clanId = $this->getClanIdFromArgs($args);
+        $entityMapper = new EntityMapper($this->container);
+        return $entityMapper->getMemberStats($clanId);
     }
 }

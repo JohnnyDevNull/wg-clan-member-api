@@ -21,13 +21,12 @@ class BaseController
      */
     public function __construct(Container $container)
     {
-       $this->container = $container;
+        $this->container = $container;
 
-       $logger = $container->get('logger');
+        $logger = $container->get('logger');
 
-       if(!empty($logger))
-       {
-           $this->logger = $logger;
-       }
+        if (!empty($logger)) {
+            $this->logger = $logger;
+        }
     }
 }

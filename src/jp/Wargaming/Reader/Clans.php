@@ -45,7 +45,10 @@ class Clans extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wgn/clans/list/
      */
-    public function getClansList($search = '', $fields = '', $limit = 100,
+    public function getClansList(
+        $search = '',
+        $fields = '',
+        $limit = 100,
         $pageNo = 0
     ) {
         return $this->request->perform('/wgn/clans/list/', [
@@ -73,8 +76,12 @@ class Clans extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wgn/clans/info/
      */
-    public function getClansInfo($clanId, $fields = '', $accessToken = '',
-        $extra = '', $membersKey = ''
+    public function getClansInfo(
+        $clanId,
+        $fields = '',
+        $accessToken = '',
+        $extra = '',
+        $membersKey = ''
     ) {
         return $this->request->perform('/wgn/clans/info/', [
             'clan_id' => $clanId,

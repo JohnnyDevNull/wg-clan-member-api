@@ -19,7 +19,7 @@ class Request
     /**
      * @var resource
      */
-    private $_ch;
+    private $ch;
 
     /**
      * @var jp\Wargaming\Region
@@ -69,8 +69,8 @@ class Request
      */
     public function __destruct()
     {
-        if($this->_ch !== null) {
-            curl_close($this->_ch);
+        if ($this->ch !== null) {
+            curl_close($this->ch);
         }
     }
 
@@ -81,53 +81,56 @@ class Request
      */
     public function perform($path, array $query)
     {
-        if($this->_ch === null) {
-            $this->_ch = curl_init();
-            curl_setopt($this->_ch, CURLOPT_FORBID_REUSE, 0);
+        if ($this->ch === null) {
+            $this->ch = curl_init();
+            curl_setopt($this->ch, CURLOPT_FORBID_REUSE, 0);
         }
 
         $url = 'http';
 
-        if($this->secure) {
+        if ($this->secure) {
             $url = 'https';
         }
 
         $url .= '://'.$this->region->getUrl().$path;
 
-        $query = array_merge( $query, [
-            'language' => $this->region->getLang(),
-            'application_id' => $this->region->getAppId()
-        ]);
+        $query = array_merge(
+            $query,
+            [
+                'language' => $this->region->getLang(),
+                'application_id' => $this->region->getAppId()
+            ]
+        );
 
         $query = array_filter($query);
 
-        if($this->method === 'GET') {
+        if ($this->method === 'GET') {
             $url .= '?'.http_build_query($query);
         } elseif ($this->method === 'POST') {
-            curl_setopt($this->_ch, CURLOPT_POST, 1);
-            curl_setopt($this->_ch, CURLOPT_POSTFIELDS, $query);
+            curl_setopt($this->ch, CURLOPT_POST, 1);
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $query);
         } else {
             throw new LogicException('Invalid request method given.');
         }
 
-        curl_setopt($this->_ch, CURLOPT_URL, $url);
-        curl_setopt($this->_ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, 1);
-        $output = curl_exec($this->_ch);
+        curl_setopt($this->ch, CURLOPT_URL, $url);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+        $output = curl_exec($this->ch);
 
-        if($output === false) {
+        if ($output === false) {
             $output = json_encode([
-                'errorno' => curl_errno($this->_ch),
-                'error' => curl_error($this->_ch),
+                'errorno' => curl_errno($this->ch),
+                'error' => curl_error($this->ch),
             ]);
         }
 
-        if($this->getPrettyPrint()) {
+        if ($this->getPrettyPrint()) {
             $output = json_decode($output);
             $output = json_encode($output, JSON_PRETTY_PRINT);
         }
 
-        if($this->getDecode()) {
+        if ($this->getDecode()) {
             $response = json_decode($output, $this->getAssoc());
         } else {
             $response = $output;

@@ -41,8 +41,7 @@ class BaseMapper
 
         $logger = $container->get('logger');
 
-        if(!empty($logger))
-        {
+        if (!empty($logger)) {
             $this->logger = $logger;
         }
     }

@@ -72,7 +72,10 @@ class Wot extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wot/account/info/
      */
-    public function getAccountInfo($accountId, $fields = '', $accessToken = '',
+    public function getAccountInfo(
+        $accountId,
+        $fields = '',
+        $accessToken = '',
         $extra = ''
     ) {
         return $this->request->perform('/wot/account/info/', [
@@ -100,8 +103,11 @@ class Wot extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wot/account/tanks/
      */
-    public function getAccountVehicles($accountId, $fields = '',
-        $accessToken = '', $tankId = 0
+    public function getAccountVehicles(
+        $accountId,
+        $fields = '',
+        $accessToken = '',
+        $tankId = 0
     ) {
         return $this->request->perform('/wot/account/tanks/', [
             'account_id' => $this->toListString($accountId),
@@ -249,8 +255,12 @@ class Wot extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wot/encyclopedia/vehicles/
      */
-    public function getEncyclopediaVehicles($tankId = 0, $fields = '',
-        $nation = '', $type = '', $tier = 0
+    public function getEncyclopediaVehicles(
+        $tankId = 0,
+        $fields = '',
+        $nation = '',
+        $type = '',
+        $tier = 0
     ) {
         return $this->request->perform('/wot/encyclopedia/vehicles/', [
             'tank_id' => $this->toListString($tankId),
@@ -286,9 +296,15 @@ class Wot extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wot/encyclopedia/vehicleprofile/
      */
-    public function getEncyclopediaVehicleprofile($tankId, $fields = '',
-        $engineId = 0, $gunId = 0, $suspensionId = 0, $turretId = 0,
-        $radioId = 0, $profileId = ''
+    public function getEncyclopediaVehicleprofile(
+        $tankId,
+        $fields = '',
+        $engineId = 0,
+        $gunId = 0,
+        $suspensionId = 0,
+        $turretId = 0,
+        $radioId = 0,
+        $profileId = ''
     ) {
         return $this->request->perform('/wot/encyclopedia/vehicleprofile/', [
             'tank_id' => $this->toListString($tankId),
@@ -318,7 +334,9 @@ class Wot extends Base
      * @return mixed
      * @see http://eu.wargaming.net/developers/api_reference/wot/encyclopedia/vehicleprofiles/
      */
-    public function getEncyclopediaVehicleprofiles($tankId, $fields = '',
+    public function getEncyclopediaVehicleprofiles(
+        $tankId,
+        $fields = '',
         $orderBy = ''
     ) {
         return $this->request->perform('/wot/encyclopedia/vehicleprofiles/', [
@@ -400,7 +418,9 @@ class Wot extends Base
      * @return mixed
      * @see http://eu.wargaming.net/developers/api_reference/wot/encyclopedia/provisions/
      */
-    public function getEncyclopediaProvisions($fields, $type = '',
+    public function getEncyclopediaProvisions(
+        $fields,
+        $type = '',
         $provisionId = 0
     ) {
         return $this->request->perform('/wot/encyclopedia/arenas/', [
@@ -427,8 +447,12 @@ class Wot extends Base
      * @return mixed
      * @see http://eu.wargaming.net/developers/api_reference/wot/encyclopedia/personalmissions/
      */
-    public function getEncyclopediaPersonalmissions($fields = '',
-        $campaignId = 0, $operationId = 0, $setId = 0, $tag = ''
+    public function getEncyclopediaPersonalmissions(
+        $fields = '',
+        $campaignId = 0,
+        $operationId = 0,
+        $setId = 0,
+        $tag = ''
     ) {
         return $this->request->perform('/wot/encyclopedia/personalmissions/', [
             'fields' => $this->toListString($fields),
@@ -481,8 +505,12 @@ class Wot extends Base
      * @return mixed
      * @see http://eu.wargaming.net/developers/api_reference/wot/encyclopedia/modules/
      */
-    public function getEncyclopediaModules($type, $nation, $fields = '',
-        $extra = '', $moduleId = 0
+    public function getEncyclopediaModules(
+        $type,
+        $nation,
+        $fields = '',
+        $extra = '',
+        $moduleId = 0
     ) {
         return $this->request->perform('/wot/encyclopedia/modules/', [
             'type' => $type,
@@ -537,7 +565,10 @@ class Wot extends Base
      * @return mixed
      * @see http://eu.wargaming.net/developers/api_reference/wot/ratings/dates/
      */
-    public function getRatingsDates($type, $fields = '', $battleType = '',
+    public function getRatingsDates(
+        $type,
+        $fields = '',
+        $battleType = '',
         $accountId = 0
     ) {
         return $this->request->perform('/wot/ratings/dates/', [
@@ -570,8 +601,12 @@ class Wot extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wot/ratings/accounts/
      */
-    public function getRatingsAccounts($type, $accountId, $fields = '',
-        $battleType = '', $date = 0
+    public function getRatingsAccounts(
+        $type,
+        $accountId,
+        $fields = '',
+        $battleType = '',
+        $date = 0
     ) {
         return $this->request->perform('/wot/ratings/accounts/', [
             'type' => $type,
@@ -605,8 +640,13 @@ class Wot extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wot/ratings/neighbors/
      */
-    public function getRatingsNeighbors($type, $accoutnId, $rankField,
-        $fields = '', $battleType = '', $date = 0
+    public function getRatingsNeighbors(
+        $type,
+        $accoutnId,
+        $rankField,
+        $fields = '',
+        $battleType = '',
+        $date = 0
     ) {
         return $this->request->perform('/wot/ratings/neighbors/', [
             'type' => $type,
@@ -640,8 +680,12 @@ class Wot extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wot/ratings/top/
      */
-    public function getRatingsTop($type, $rankField, $fields = '',
-        $battleType = '', $date = 0
+    public function getRatingsTop(
+        $type,
+        $rankField,
+        $fields = '',
+        $battleType = '',
+        $date = 0
     ) {
         return $this->request->perform('/wot/ratings/neighbors/', [
             'type' => $type,

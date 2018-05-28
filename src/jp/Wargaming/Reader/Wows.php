@@ -55,7 +55,10 @@ class Wows extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wows/account/info/
      */
-    public function getAccountInfo($accountId, $fields = '', $accessToken = '',
+    public function getAccountInfo(
+        $accountId,
+        $fields = '',
+        $accessToken = '',
         $extra = ''
     ) {
         return $this->request->perform('/wows/account/info/', [
@@ -98,8 +101,11 @@ class Wows extends Base
      * @return mixed
      * @see https://developers.wargaming.net/reference/all/wows/account/statsbydate/
      */
-    public function getAccountStatsByDate($accountId, $fields = '',
-        $dates = '', $extra = ''
+    public function getAccountStatsByDate(
+        $accountId,
+        $fields = '',
+        $dates = '',
+        $extra = ''
     ) {
         return $this->request->perform('/wows/account/statsbydate/', [
             'account_id' => $this->toListString($accountId),
@@ -137,8 +143,11 @@ class Wows extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wows/encyclopedia/ships/
      */
-    public function getEncyclopediaShips($shipId = 0, $fields = '',
-        $nation = '', $type = ''
+    public function getEncyclopediaShips(
+        $shipId = 0,
+        $fields = '',
+        $nation = '',
+        $type = ''
     ) {
         return $this->request->perform('/wows/encyclopedia/ships/', [
             'ship_id' => $this->toListString($shipId),
@@ -183,10 +192,18 @@ class Wows extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wows/encyclopedia/shipprofile/
      */
-    public function getEncyclopediaShipprofile($shipId, $fields = '',
-        $artilleryId = 0, $torpedosId = 0, $fireControlId = 0,
-        $flightControlId = 0, $hullId = 0, $endingeId = 0, $fighterId = 0,
-        $diveBomberId = 0, $torpedoBomberId = 0
+    public function getEncyclopediaShipprofile(
+        $shipId,
+        $fields = '',
+        $artilleryId = 0,
+        $torpedosId = 0,
+        $fireControlId = 0,
+        $flightControlId = 0,
+        $hullId = 0,
+        $endingeId = 0,
+        $fighterId = 0,
+        $diveBomberId = 0,
+        $torpedoBomberId = 0
     ) {
         return $this->request->perform('/wot/encyclopedia/shipprofile/', [
             'ship_id' => $shipId,
@@ -216,7 +233,9 @@ class Wows extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wows/encyclopedia/modules/
      */
-    public function getEncyclopediaModules($fields = '', $type = '',
+    public function getEncyclopediaModules(
+        $fields = '',
+        $type = '',
         $moduleId = 0
     ) {
         return $this->request->perform('/wows/encyclopedia/modules/', [
@@ -323,7 +342,9 @@ class Wows extends Base
      * @return mixed
      * @see https://developers.wargaming.net/reference/all/wows/encyclopedia/consumables
      */
-    public function getEncyclopediaConsumables($fields = '', $type = '',
+    public function getEncyclopediaConsumables(
+        $fields = '',
+        $type = '',
         $consumableId = 0
     ) {
         return $this->request->perform('/wows/encyclopedia/consumables/', [
@@ -342,7 +363,8 @@ class Wows extends Base
      * @return mixed
      * @see https://developers.wargaming.net/reference/all/wows/encyclopedia/collections/
      */
-    public function getEncyclopediaColletions($fields = '' ) {
+    public function getEncyclopediaColletions($fields = '')
+    {
         return $this->request->perform('/wows/encyclopedia/colletions/', [
             'fields' => $this->toListString($fields)
         ]);
@@ -357,7 +379,8 @@ class Wows extends Base
      * @return mixed
      * @see https://developers.wargaming.net/reference/all/wows/encyclopedia/colletioncards/
      */
-    public function getEncyclopediaColletioncards($fields = '' ) {
+    public function getEncyclopediaColletioncards($fields = '')
+    {
         return $this->request->perform('/wows/encyclopedia/colletioncards/', [
             'fields' => $this->toListString($fields)
         ]);
@@ -372,7 +395,8 @@ class Wows extends Base
      * @return mixed
      * @see https://developers.wargaming.net/reference/all/wows/encyclopedia/maps/
      */
-    public function getEncyclopediaMaps($fields = '' ) {
+    public function getEncyclopediaMaps($fields = '')
+    {
         return $this->request->perform('/wows/encyclopedia/maps/', [
             'fields' => $this->toListString($fields)
         ]);
@@ -432,8 +456,12 @@ class Wows extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wows/seasons/shipstats/
      */
-    public function getSeasonsShipstats($accountId, $fields = '',
-        $accessToken = '', $seasonId = 0, $shipId = 0
+    public function getSeasonsShipstats(
+        $accountId,
+        $fields = '',
+        $accessToken = '',
+        $seasonId = 0,
+        $shipId = 0
     ) {
         return $this->request->perform('/wows/seasons/shipstats/', [
             'account_id' => $accountId,
@@ -458,8 +486,11 @@ class Wows extends Base
      * @return mixed
      * @see https://eu.wargaming.net/developers/api_reference/wows/seasons/accountinfo/
      */
-    public function getSeasonsAccountinfo($accountId, $fields = '',
-        $accessToken = '', $seasonId = 0
+    public function getSeasonsAccountinfo(
+        $accountId,
+        $fields = '',
+        $accessToken = '',
+        $seasonId = 0
     ) {
         return $this->request->perform('/wows/seasons/accountinfo/', [
             'account_id' => $accountId,
@@ -481,8 +512,11 @@ class Wows extends Base
      * @return mixed
      * @see https://developers.wargaming.net/reference/all/wows/clans/list/
      */
-    public function getClanList($search, $fields = '',
-        $limit = 100, $pageNo = 1
+    public function getClanList(
+        $search,
+        $fields = '',
+        $limit = 100,
+        $pageNo = 1
     ) {
         return $this->request->perform('/wows/clans/list/', [
             'search' => $search,
@@ -503,7 +537,9 @@ class Wows extends Base
      * @return mixed
      * @see https://developers.wargaming.net/reference/all/wows/clans/info/
      */
-    public function getClanInfo($clanId, $fields = '',
+    public function getClanInfo(
+        $clanId,
+        $fields = '',
         $extra = ''
     ) {
         return $this->request->perform('/wows/clans/info/', [
@@ -525,7 +561,9 @@ class Wows extends Base
      * @return mixed
      * @see https://developers.wargaming.net/reference/all/wows/clans/accountinfo/
      */
-    public function getClanAccountInfo($accountId, $fields = '',
+    public function getClanAccountInfo(
+        $accountId,
+        $fields = '',
         $extra = ''
     ) {
         return $this->request->perform('/wows/clans/accountinfo/', [
@@ -545,8 +583,10 @@ class Wows extends Base
      * @return mixed
      * @see https://developers.wargaming.net/reference/all/wows/clans/glossary/
      */
-    public function getClanGlossary($fields = '', $extra = '')
-    {
+    public function getClanGlossary(
+        $fields = '',
+        $extra = ''
+    ) {
         return $this->request->perform('/wows/clans/glossary/', [
             'fields' => $this->toListString($fields),
             'extra' => $this->toListString($extra),

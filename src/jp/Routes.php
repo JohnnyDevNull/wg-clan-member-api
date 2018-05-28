@@ -14,6 +14,7 @@ class Routes
         $app->get('/clans/{clanId:[0-9]+}/info', \jp\Controllers\ClansController::class.':getClanInfo');
         $app->get('/clans/{clanId:[0-9]+}/members', \jp\Controllers\ClansController::class.':getMemberList');
         $app->get('/clans/{clanId:[0-9]+}/members/{memberId:[0-9]+}', \jp\Controllers\ClansController::class.':getMember');
+        $app->get('/clans/{clanId:[0-9]+}/members/stats', \jp\Controllers\ClansController::class.':getMemberStats');
         $app->get('/clans/{clanId:[0-9]+}/ranks', \jp\Controllers\ClansController::class.':getRanks');
 
         $app->get('/players/{playerId:[0-9]+/info}', \jp\Controllers\PlayersController::class.':getPlayerInfo');

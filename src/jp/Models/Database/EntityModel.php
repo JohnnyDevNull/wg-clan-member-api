@@ -40,8 +40,7 @@ class EntityModel extends BaseModel
      */
     public function __get($name)
     {
-        if(isset($this->data->{$name}))
-        {
+        if (isset($this->data->{$name})) {
             return (string)$this->data->{$name};
         }
 

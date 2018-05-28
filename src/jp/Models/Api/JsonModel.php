@@ -23,13 +23,10 @@ class JsonModel extends BaseModel
      */
     public function getJson()
     {
-        if($this->container->get('settings')['json_pretty_print'])
-        {
+        if ($this->container->get('settings')['json_pretty_print']) {
             $stdClass = $this->getStdClass();
             return json_encode($stdClass, JSON_PRETTY_PRINT);
-        }
-        else
-        {
+        } else {
             return $this->json;
         }
     }

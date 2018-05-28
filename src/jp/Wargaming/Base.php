@@ -50,8 +50,7 @@ abstract class Base
      */
     protected function toListString($fields)
     {
-        if(is_array($fields))
-        {
+        if (is_array($fields)) {
             return  implode(',', $fields);
         }
 
