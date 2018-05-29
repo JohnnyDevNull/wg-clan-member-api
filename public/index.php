@@ -25,11 +25,11 @@ session_start();
 
 $config = new \jp\Config();
 $routes = new \jp\Routes();
+$dependecies = new \jp\Dependencies();
 
 $app = new \Slim\App($config->getSettings());
 
-$config->registerLogger($app);
-$config->registerCORS($app);
+$dependecies->addMiddlerware($app);
 $routes->attach($app);
 
 $app->run();
