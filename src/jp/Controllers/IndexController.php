@@ -32,7 +32,7 @@ class IndexController extends BaseController
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param                                     $args
      *
-     * @return string
+     * @return \Psr\Http\Message\ResponseInterface
      * @throws \Exception
      */
     public function getRanks(Request $request, Response $response, $args)
@@ -41,7 +41,7 @@ class IndexController extends BaseController
         $members = $entityMapper->getRankTypes();
         $apiJsonModel = new JsonModel($this->container);
         $apiJsonModel->setJson(json_encode($members));
-
-        return $apiJsonModel->getJson();
+        $response->getBody()->write($apiJsonModel->getJson());
+        return $response;
     }
 }

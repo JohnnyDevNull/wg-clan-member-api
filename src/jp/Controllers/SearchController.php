@@ -21,13 +21,14 @@ class SearchController extends BaseController
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param array                               $args
      *
-     * @return string
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function getPlayer(Request $request, Response $response, $args)
     {
         $name = $this->getNameFromArgs($args);
         $apiMapper = new \jp\Mappers\ApiMapper($this->container);
-        return $apiMapper->searchPlayer($name);
+        $response->getBody()->write($apiMapper->searchPlayer($name));
+        return $response;
     }
 
     /**
@@ -35,12 +36,13 @@ class SearchController extends BaseController
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param array                               $args
      *
-     * @return string
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function getClan(Request $request, Response $response, $args)
     {
         $name = $this->getNameFromArgs($args);
         $apiMapper = new \jp\Mappers\ApiMapper($this->container);
-        return $apiMapper->searchClan($name);
+        $response->getBody()->write($apiMapper->searchClan($name));
+        return $response;
     }
 }

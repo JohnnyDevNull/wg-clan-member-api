@@ -23,13 +23,14 @@ class PlayersController extends BaseController
      * @param \Psr\Http\Message\ResponseInterface $response
      * @param array                               $args
      *
-     * @return string
+     * @return \Psr\Http\Message\ResponseInterface
      * @throws \Exception
      */
     public function getPlayerInfo(Request $request, Response $response, array $args)
     {
         $playerId = $this->getPlayerIdFromArgs($args);
         $apiMapper = new ApiMapper($this->container);
-        return $apiMapper->getPlayer($playerId);
+        $response->getBody()->write($apiMapper->getPlayer($playerId));
+        return $response;
     }
 }
