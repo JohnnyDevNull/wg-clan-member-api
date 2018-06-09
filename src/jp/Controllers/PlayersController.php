@@ -33,4 +33,20 @@ class PlayersController extends BaseController
         $response->getBody()->write($apiMapper->getPlayer($playerId));
         return $response;
     }
+
+    /**
+     * @param \Psr\Http\Message\RequestInterface  $request
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param array                               $args
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Exception
+     */
+    public function getPlayerProgress(Request $request, Response $response, array $args)
+    {
+        $playerId = $this->getPlayerIdFromArgs($args);
+        $apiMapper = new EntityMapper($this->container);
+        $response->getBody()->write($apiMapper->getPlayerProgress($playerId));
+        return $response;
+    }
 }

@@ -6,13 +6,14 @@ use jp\Misc\BaseMapper;
 use jp\Misc\Database;
 use jp\Models\Database\EntityModel;
 use Interop\Container\ContainerInterface as Container;
+use jp\Controllers\ProgressController;
 
 class EntityMapper extends BaseMapper
 {
     /**
      * @var \jp\Misc\Database
      */
-    private $db;
+    protected $db;
 
     /**
      * @param \Interop\Container\ContainerInterface $container
@@ -367,6 +368,10 @@ class EntityMapper extends BaseMapper
         }
     }
 
+    /**
+     * @param int $clanId
+     * @return string
+     */
     public function getMemberStats($clanId)
     {
         $sql = 'SELECT id '
@@ -399,5 +404,40 @@ class EntityMapper extends BaseMapper
         }
 
         return $this->getJsonFromArray($memberStats);
+    }
+
+    /**
+     * @param int $accountId
+     * @return string
+     */
+    public function getPlayerProgress($accountId)
+    {
+        $result = $this->getPlayerRec($accountId);
+        $pgCtrl = new ProgressController($this->container);
+
+        if ($result->num_rows == 0) {
+            $progressData = $pgCtrl->generatePlayerProgress($accountId);
+        } else {
+            // @todo: implement update function
+            //$progressData = $pgCtrl->refreshPlayerProgress($accountId);
+            $progressData = $pgCtrl->generatePlayerProgress($accountId);
+        }
+
+        return $this->getJsonFromArray($progressData);
+    }
+
+    /**
+     * @param  int $accountId
+     * @return mysli_result|bool
+     */
+    protected function getPlayerRec($accountId)
+    {
+        $sql = 'SELECT * '
+             . 'FROM players '
+             . 'WHERE id = ? ';
+        $playerStmt = $this->db->prepare($sql);
+        $playerStmt->bind_param('i', $accountId);
+        $this->db->execute($playerStmt);
+        return $playerStmt->get_result();
     }
 }
